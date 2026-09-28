@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pizzaria Bella Massa - Sistema Sem Papel</title>
+    <!-- Font Awesome para ícones -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+    <!-- CSS Separado -->
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <!-- Cabeçalho Principal e Seletor de Telas -->
+    <header class="main-header">
+        <div class="brand">
+            <i class="fa-solid fa-pizza-slice brand-icon"></i>
+            <div>
+                <h1>Bella Massa</h1>
+                <span class="subtitle">Sistema Operacional Sem Papel</span>
+            </div>
+        </div>
+
+        <nav class="screen-selector">
+            <button class="nav-btn active" data-target="view-overview">
+                <i class="fa-solid fa-border-all"></i>
+                <span>Visão Geral (2x2)</span>
+            </button>
+            <button class="nav-btn" data-target="view-cliente">
+                <i class="fa-solid fa-mobile-screen-button"></i>
+                <span>Mesa (Cliente)</span>
+            </button>
+            <button class="nav-btn" data-target="view-pizzaiolo">
+                <i class="fa-solid fa-fire-burner"></i>
+                <span>Cozinha (KDS)</span>
+            </button>
+            <button class="nav-btn" data-target="view-garcom">
+                <i class="fa-solid fa-bell"></i>
+                <span>Garçom</span>
+                <span id="waiter-badge" class="badge-count hidden">0</span>
+            </button>
+            <button class="nav-btn" data-target="view-caixa">
+                <i class="fa-solid fa-cash-register"></i>
+                <span>Caixa (PDV)</span>
+            </button>
+        </nav>
+    </header>
+
+    <!-- Container Principal do Aplicativo -->
+    <main id="app-viewport" class="layout-overview">
+
+        <!-- ==================== TELA 1: CLIENTE / MESA ==================== -->
+        <section id="view-cliente" class="screen-panel">
+            <div class="panel-header">
+                <div class="table-selector-box">
+                    <label for="client-table-select"><i class="fa-solid fa-chair"></i> Selecionar Mesa:</label>
+                    <select id="client-table-select" class="custom-select"></select>
+                </div>
+                <div class="order-status-pill" id="client-order-status">
+                    <i class="fa-solid fa-clock"></i> Nenhum pedido ativo
+                </div>
+            </div>
+
+            <div class="client-layout">
+                <!-- Cardápio e Opções -->
+                <div class="menu-section">
+                    <div class="category-tabs">
+                        <button class="cat-btn active" data-cat="Pizzas"><i class="fa-solid fa-pizza-slice"></i> Pizzas</button>
+                        <button class="cat-btn" data-cat="Bebidas"><i class="fa-solid fa-bottle-water"></i> Bebidas</button>
+                        <button class="cat-btn" data-cat="Sobremesas"><i class="fa-solid fa-ice-cream"></i> Sobremesas</button>
+                    </div>
+
+                    <div id="menu-grid" class="menu-grid"></div>
+                </div>
+
+                <!-- Carrinho do Cliente -->
+                <div class="cart-section">
+                    <h3><i class="fa-solid fa-cart-shopping"></i> Seu Pedido</h3>
+                    <div id="cart-items" class="cart-items-list">
+                        <p class="empty-msg">Seu carrinho está vazio.</p>
+                    </div>
+
+                    <div class="cart-summary">
+                        <div class="summary-row">
+                            <span>Subtotal:</span>
+                            <strong id="cart-subtotal">R$ 0,00</strong>
+                        </div>
+                        <button id="btn-submit-order" class="btn-primary" disabled>
+                            <i class="fa-solid fa-paper-plane"></i> Enviar Pedido para Cozinha
+                        </button>
+                    </div>
+
+                    <!-- Linha do Tempo do Pedido Atual -->
+                    <div class="tracker-box hidden" id="client-tracker">
+                        <h4>Acompanhamento do Pedido</h4>
+                        <div class="stepper">
+                            <div class="step step-1 active" id="step-recebido">
+                                <i class="fa-solid fa-check"></i> Recebido
+                            </div>
+                            <div class="step step-2" id="step-preparo">
+                                <i class="fa-solid fa-kitchen-set"></i> No Forno
+                            </div>
+                            <div class="step step-3" id="step-pronto">
+                                <i class="fa-solid fa-bell"></i> Pronto
+                            </div>
+                            <div class="step step-4" id="step-entregue">
+                                <i class="fa-solid fa-thumbs-up"></i> Na Mesa
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ==================== TELA 2: PIZZAIOLO (KDS) ==================== -->
+        <section id="view-pizzaiolo" class="screen-panel dark-kds">
+            <div class="panel-header kds-header">
+                <h2><i class="fa-solid fa-fire-burner"></i> KDS Cozinha - Fila de Produção (FIFO)</h2>
+                <div class="kds-stats">
+                    <span>Fila: <strong id="kds-count">0</strong></span>
+                    <span class="timer-legend"><i class="fa-solid fa-circle text-green"></i> &lt;10m | <i class="fa-solid fa-circle text-yellow"></i> 10-20m | <i class="fa-solid fa-circle text-red"></i> &gt;20m</span>
+                </div>
+            </div>
+
+            <div id="kds-cards-container" class="kds-grid">
+                <!-- Cards de pedidos da cozinha serão inseridos via JS -->
+            </div>
+        </section>
+
+        <!-- ==================== TELA 3: GARÇOM ==================== -->
+        <section id="view-garcom" class="screen-panel">
+            <div class="panel-header">
+                <h2><i class="fa-solid fa-bell"></i> Painel do Garçom e Salão</h2>
+                <button id="btn-sound-toggle" class="btn-secondary">
+                    <i class="fa-solid fa-volume-high"></i> Som Ativo
+                </button>
+            </div>
+
+            <div class="waiter-layout">
+                <!-- Notificações de Pratos Prontos -->
+                <div class="alerts-column">
+                    <h3><i class="fa-solid fa-tray"></i> Pratos Prontos para Entrega</h3>
+                    <div id="waiter-alerts-list" class="alerts-list">
+                        <p class="empty-msg">Nenhum prato aguardando no balcão.</p>
+                    </div>
+                </div>
+
+                <!-- Mapa do Salão -->
+                <div class="floor-column">
+                    <h3><i class="fa-solid fa-map"></i> Mapa de Mesas do Salão</h3>
+                    <div id="floor-map-grid" class="floor-grid"></div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ==================== TELA 4: CAIXA (PDV) ==================== -->
+        <section id="view-caixa" class="screen-panel">
+            <div class="panel-header">
+                <h2><i class="fa-solid fa-cash-register"></i> Caixa & Fechamento de Comanda</h2>
+                <div class="cashier-select-box">
+                    <label for="caixa-table-select">Mesa Ativa:</label>
+                    <select id="caixa-table-select" class="custom-select"></select>
+                </div>
+            </div>
+
+            <div class="caixa-layout">
+                <!-- Extrato Detalhado -->
+                <div class="extrato-section">
+                    <div class="extrato-header">
+                        <h3 id="extrato-mesa-title">Mesa 01 - Comanda</h3>
+                        <span id="extrato-mesa-status" class="status-pill">Status</span>
+                    </div>
+
+                    <div id="extrato-items" class="extrato-list">
+                        <p class="empty-msg">Selecione uma mesa com consumo.</p>
+                    </div>
+
+                    <div class="extrato-totals">
+                        <div class="row">
+                            <span>Consumo:</span>
+                            <span id="caixa-subtotal">R$ 0,00</span>
+                        </div>
+                        <div class="row">
+                            <label><input type="checkbox" id="chk-service-fee" checked> Taxa de Serviço (10%):</label>
+                            <span id="caixa-fee">R$ 0,00</span>
+                        </div>
+                        <div class="row total-row">
+                            <span>TOTAL:</span>
+                            <strong id="caixa-grand-total">R$ 0,00</strong>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Painel de Pagamento -->
+                <div class="checkout-section">
+                    <h3><i class="fa-solid fa-receipt"></i> Divisão & Pagamento</h3>
+
+                    <div class="split-calculator">
+                        <label for="split-people"><i class="fa-solid fa-users"></i> Dividir conta por quantas pessoas?</label>
+                        <input type="range" id="split-people" min="1" max="10" value="1">
+                        <div class="split-display">
+                            <span>Pessoas: <strong id="split-count">1</strong></span>
+                            <span>Valor por pessoa: <strong id="split-val">R$ 0,00</strong></span>
+                        </div>
+                    </div>
+
+                    <div class="payment-methods">
+                        <h4>Forma de Pagamento</h4>
+                        <div class="pay-btn-group">
+                            <button class="pay-btn active" data-method="PIX"><i class="fa-brands fa-pix"></i> Pix</button>
+                            <button class="pay-btn" data-method="CARD"><i class="fa-solid fa-credit-card"></i> Cartão</button>
+                            <button class="pay-btn" data-method="CASH"><i class="fa-solid fa-money-bill-wave"></i> Dinheiro</button>
+                        </div>
+                    </div>
+
+                    <button id="btn-process-payment" class="btn-success btn-block" disabled>
+                        <i class="fa-solid fa-circle-check"></i> Encerrar Mesa & Emitir Comprovante
+                    </button>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Modal de Montagem de Pizza -->
+    <div id="modal-pizza" class="modal-overlay hidden">
+        <div class="modal-card">
+            <div class="modal-header">
+                <h3 id="modal-pizza-title">Personalizar Pizza</h3>
+                <button class="modal-close" id="btn-close-modal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label>Tipo de Recheio:</label>
+                    <div class="radio-group">
+                        <label><input type="radio" name="pizza-type" value="inteira" checked> Inteira</label>
+                        <label><input type="radio" name="pizza-type" value="meia"> Meia a Meia</label>
+                    </div>
+                </div>
+
+                <div class="form-group" id="second-flavor-group" style="display:none;">
+                    <label for="second-flavor-select">Segundo Sabor:</label>
+                    <select id="second-flavor-select" class="custom-select"></select>
+                </div>
+
+                <div class="form-group">
+                    <label for="crust-select">Borda Recheada:</label>
+                    <select id="crust-select" class="custom-select">
+                        <option value="Sem Borda">Tradicional (Sem borda recheada)</option>
+                        <option value="Catupiry (+R$ 8)">Borda de Catupiry (+R$ 8,00)</option>
+                        <option value="Cheddar (+R$ 8)">Borda de Cheddar (+R$ 8,00)</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="pizza-obs"><i class="fa-solid fa-circle-exclamation text-red"></i> Observação Crítica:</label>
+                    <input type="text" id="pizza-obs" class="custom-input" placeholder="Ex: SEM CEBOLA, SEM AZEITONA">
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button id="btn-add-custom-pizza" class="btn-primary">Adicionar ao Pedido</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal de Comprovante de Pagamento -->
+    <div id="modal-receipt" class="modal-overlay hidden">
+        <div class="modal-card receipt-card">
+            <div id="receipt-print-area">
+                <div class="receipt-header">
+                    <h2>Bella Massa Pizzaria</h2>
+                    <p>Pinda - SP | Tel: (12) 99999-0000</p>
+                    <hr>
+                    <p><strong>CUPOM FISCAL SIMULADO</strong></p>
+                    <p id="receipt-date-time"></p>
+                    <p id="receipt-table-num"></p>
+                </div>
+                <div id="receipt-items-list" class="receipt-body"></div>
+                <hr>
+                <div class="receipt-footer">
+                    <div class="receipt-row"><span>Total:</span><strong id="receipt-total"></strong></div>
+                    <div class="receipt-row"><span>Forma de Pagto:</span><strong id="receipt-method"></strong></div>
+                    <p class="thank-you">Obrigado pela preferência!</p>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button id="btn-print-receipt" class="btn-primary"><i class="fa-solid fa-print"></i> Imprimir</button>
+                <button id="btn-close-receipt" class="btn-secondary">Fechar</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Script Separado -->
+    <script src="script.js"></script>
+</body>
+</html>

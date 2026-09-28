@@ -1,0 +1,517 @@
+/* ==================== RESET & VARIÁVEIS ==================== */
+:root {
+    --primary: #d9381e;
+    --primary-dark: #b02610;
+    --secondary: #2c3e50;
+    --bg-light: #f4f6f9;
+    --bg-card: #ffffff;
+    --text-dark: #1e293b;
+    --text-muted: #64748b;
+    --border-color: #e2e8f0;
+    
+    /* Indicadores KDS / Status */
+    --status-green: #10b981;
+    --status-yellow: #f59e0b;
+    --status-red: #ef4444;
+    --status-blue: #3b82f6;
+
+    --font-main: 'Inter', sans-serif;
+    --font-mono: 'JetBrains Mono', monospace;
+}
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: var(--font-main);
+    background-color: #0f172a;
+    color: var(--text-dark);
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+/* ==================== CABEÇALHO & SELETOR DE VISTAS ==================== */
+.main-header {
+    background-color: #1e293b;
+    color: #ffffff;
+    padding: 10px 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 2px solid #334155;
+}
+
+.brand {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.brand-icon {
+    font-size: 2rem;
+    color: var(--primary);
+}
+
+.brand h1 {
+    font-size: 1.25rem;
+    font-weight: 700;
+}
+
+.brand .subtitle {
+    font-size: 0.75rem;
+    color: #94a3b8;
+}
+
+.screen-selector {
+    display: flex;
+    gap: 8px;
+}
+
+.nav-btn {
+    background-color: #334155;
+    color: #cbd5e1;
+    border: none;
+    padding: 8px 14px;
+    border-radius: 6px;
+    font-weight: 500;
+    font-size: 0.85rem;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    position: relative;
+    transition: all 0.2s ease;
+}
+
+.nav-btn:hover {
+    background-color: #475569;
+    color: #ffffff;
+}
+
+.nav-btn.active {
+    background-color: var(--primary);
+    color: #ffffff;
+}
+
+.badge-count {
+    background-color: var(--status-red);
+    color: #ffffff;
+    font-size: 0.7rem;
+    padding: 2px 6px;
+    border-radius: 10px;
+    font-weight: bold;
+}
+
+/* ==================== LAYOUT DO VIEWPORT ==================== */
+#app-viewport {
+    flex: 1;
+    overflow: hidden;
+    padding: 12px;
+    background-color: #0f172a;
+}
+
+/* Modo Visão Geral (2x2 Grid) */
+#app-viewport.layout-overview {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: 1fr 1fr;
+    gap: 12px;
+}
+
+#app-viewport.layout-overview .screen-panel {
+    display: flex !important;
+    border-radius: 8px;
+    border: 1px solid #334155;
+}
+
+/* Modo Tela Única */
+#app-viewport.layout-single .screen-panel {
+    display: none;
+    height: 100%;
+}
+
+#app-viewport.layout-single .screen-panel.active-single {
+    display: flex !important;
+    height: 100%;
+}
+
+/* Estrutura Geral dos Painéis */
+.screen-panel {
+    background-color: var(--bg-light);
+    border-radius: 8px;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    box-shadow: 0 4px 6px -1px rgba(0,0,0,0.3);
+}
+
+.panel-header {
+    background-color: #ffffff;
+    padding: 12px 16px;
+    border-bottom: 1px solid var(--border-color);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.panel-header h2 {
+    font-size: 1.1rem;
+    color: var(--secondary);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+/* ==================== TELA 1: CLIENTE / MESA ==================== */
+.client-layout {
+    display: grid;
+    grid-template-columns: 1fr 340px;
+    flex: 1;
+    overflow: hidden;
+}
+
+.menu-section {
+    padding: 12px;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.category-tabs {
+    display: flex;
+    gap: 8px;
+}
+
+.cat-btn {
+    padding: 6px 12px;
+    border: 1px solid var(--border-color);
+    background: #ffffff;
+    border-radius: 20px;
+    font-size: 0.85rem;
+    cursor: pointer;
+}
+
+.cat-btn.active {
+    background-color: var(--secondary);
+    color: #ffffff;
+    border-color: var(--secondary);
+}
+
+.menu-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 12px;
+}
+
+.menu-card {
+    background: #ffffff;
+    padding: 12px;
+    border-radius: 8px;
+    border: 1px solid var(--border-color);
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.menu-card h4 {
+    font-size: 0.95rem;
+    color: var(--secondary);
+}
+
+.menu-card p {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+    margin: 6px 0;
+}
+
+.menu-card .price {
+    font-weight: bold;
+    color: var(--primary);
+}
+
+.cart-section {
+    background: #ffffff;
+    border-left: 1px solid var(--border-color);
+    padding: 12px;
+    display: flex;
+    flex-direction: column;
+}
+
+.cart-items-list {
+    flex: 1;
+    overflow-y: auto;
+    margin: 10px 0;
+}
+
+.cart-item {
+    padding: 8px;
+    border-bottom: 1px solid var(--border-color);
+    font-size: 0.85rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.cart-item .obs-tag {
+    font-size: 0.7rem;
+    color: var(--status-red);
+    font-weight: bold;
+    display: block;
+}
+
+/* Stepper de Status */
+.tracker-box {
+    margin-top: 10px;
+    padding-top: 10px;
+    border-top: 1px solid var(--border-color);
+}
+
+.stepper {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 8px;
+    font-size: 0.65rem;
+}
+
+.step {
+    color: var(--text-muted);
+    text-align: center;
+    flex: 1;
+}
+
+.step.active {
+    color: var(--status-green);
+    font-weight: bold;
+}
+
+/* ==================== TELA 2: PIZZAIOLO (KDS) ==================== */
+.dark-kds {
+    background-color: #090d16;
+    color: #f1f5f9;
+}
+
+.kds-header {
+    background-color: #111827;
+    border-bottom: 1px solid #1f2937;
+}
+
+.kds-header h2 {
+    color: #f9fafb;
+}
+
+.kds-grid {
+    padding: 12px;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    gap: 12px;
+    overflow-y: auto;
+    flex: 1;
+}
+
+.kds-card {
+    background-color: #111827;
+    border: 2px solid #374151;
+    border-radius: 8px;
+    padding: 12px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.kds-card.timer-green { border-color: var(--status-green); }
+.kds-card.timer-yellow { border-color: var(--status-yellow); }
+.kds-card.timer-red { border-color: var(--status-red); animation: pulse 1.5s infinite; }
+
+.kds-card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid #1f2937;
+    padding-bottom: 6px;
+}
+
+.kds-card-title {
+    font-weight: bold;
+    font-size: 1.1rem;
+    color: #f3f4f6;
+}
+
+.kds-timer {
+    font-family: var(--font-mono);
+    font-weight: bold;
+    font-size: 0.9rem;
+}
+
+.kds-items {
+    margin: 10px 0;
+    list-style: none;
+    font-size: 0.85rem;
+}
+
+.kds-items li {
+    margin-bottom: 6px;
+}
+
+.kds-obs {
+    background-color: #7f1d1d;
+    color: #fecaca;
+    padding: 2px 6px;
+    border-radius: 4px;
+    font-size: 0.75rem;
+    font-weight: bold;
+    display: inline-block;
+    margin-top: 2px;
+}
+
+/* ==================== TELA 3: GARÇOM ==================== */
+.waiter-layout {
+    display: grid;
+    grid-template-columns: 320px 1fr;
+    flex: 1;
+    overflow: hidden;
+    padding: 12px;
+    gap: 12px;
+}
+
+.alerts-list {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-top: 8px;
+    overflow-y: auto;
+}
+
+.alert-card {
+    background-color: #fef3c7;
+    border-left: 4px solid var(--status-yellow);
+    padding: 10px;
+    border-radius: 4px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.floor-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(110px, 1fr));
+    gap: 10px;
+    margin-top: 8px;
+}
+
+.table-card {
+    background-color: #ffffff;
+    border: 2px solid var(--border-color);
+    border-radius: 8px;
+    padding: 12px;
+    text-align: center;
+    cursor: pointer;
+}
+
+.table-card.status-livre { border-color: var(--status-green); background-color: #ecfdf5; }
+.table-card.status-consumindo { border-color: var(--status-blue); background-color: #eff6ff; }
+.table-card.status-pronto { border-color: var(--status-yellow); background-color: #fffbebf; animation: pulse 1s infinite; }
+
+/* ==================== TELA 4: CAIXA (PDV) ==================== */
+.caixa-layout {
+    display: grid;
+    grid-template-columns: 1fr 340px;
+    flex: 1;
+    overflow: hidden;
+    padding: 12px;
+    gap: 12px;
+}
+
+.extrato-section, .checkout-section {
+    background: #ffffff;
+    border-radius: 8px;
+    padding: 12px;
+    display: flex;
+    flex-direction: column;
+    border: 1px solid var(--border-color);
+}
+
+.extrato-list {
+    flex: 1;
+    overflow-y: auto;
+    margin: 10px 0;
+}
+
+.extrato-row {
+    display: flex;
+    justify-content: space-between;
+    padding: 6px 0;
+    border-bottom: 1px dotted var(--border-color);
+    font-size: 0.85rem;
+}
+
+.pay-btn-group {
+    display: flex;
+    gap: 6px;
+    margin: 10px 0;
+}
+
+.pay-btn {
+    flex: 1;
+    padding: 8px;
+    border: 1px solid var(--border-color);
+    background: #ffffff;
+    border-radius: 6px;
+    cursor: pointer;
+}
+
+.pay-btn.active {
+    background-color: var(--secondary);
+    color: #ffffff;
+}
+
+/* ==================== MODAIS & COMPONENTES ==================== */
+.modal-overlay {
+    position: fixed;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: rgba(0,0,0,0.6);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+
+.modal-card {
+    background: #ffffff;
+    border-radius: 8px;
+    width: 90%;
+    max-width: 450px;
+    padding: 16px;
+}
+
+.receipt-card {
+    font-family: var(--font-mono);
+    max-width: 350px;
+}
+
+.hidden { display: none !important; }
+
+/* Botões Genéricos */
+.btn-primary { background-color: var(--primary); color: white; border: none; padding: 8px 12px; border-radius: 6px; cursor: pointer; }
+.btn-secondary { background-color: var(--secondary); color: white; border: none; padding: 8px 12px; border-radius: 6px; cursor: pointer; }
+.btn-success { background-color: var(--status-green); color: white; border: none; padding: 10px; border-radius: 6px; cursor: pointer; font-weight: bold; }
+.btn-block { width: 100%; }
+
+.custom-select, .custom-input {
+    width: 100%;
+    padding: 8px;
+    border-radius: 6px;
+    border: 1px solid var(--border-color);
+    margin-top: 4px;
+}
+
+@keyframes pulse {
+    0% { opacity: 1; }
+    50% { opacity: 0.7; }
+    100% { opacity: 1; }
+}
